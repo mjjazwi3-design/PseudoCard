@@ -1,0 +1,22 @@
+name: Supabase Backup
+on:
+  schedule:
+    - cron: "0 2 * * *" # يومياً الساعة 2 صباحاً
+  workflow_dispatch:
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Dump database
+        run: |
+          supabase db dump --db-url "${{ secrets.SUPABASE_DB_URL }}" -f backup.sql
+      - name: Commit and push backup
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Automated database backup"
+          file_pattern: backup.sql
