@@ -1,0 +1,15 @@
+name: Supabase Keep-Alive
+on:
+  schedule:
+    - cron: "0 0 */3 * *" # كل 3 أيام
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase
+        run: |
+          curl -s -o /dev/null -w "%{http_code}" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+            "https://prdlwxmslcbloinpzpnp.supabase.co/rest/v1/keepalive?select=*&limit=1"
